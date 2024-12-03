@@ -9,3 +9,6 @@ venv
 *.hdr
 google_scanned_models/
 scripts/nvisii_data_gen/output/dataset/
+inference/output/*
+.vscode
+*.zip

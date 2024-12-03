@@ -266,7 +266,23 @@ class ModelData(object):
         else:
             net = net.cuda()
 
-        net.load_state_dict(torch.load(path))
+        def remove_module_prefix(state_dict):
+            new_state_dict = {}
+            for key, value in state_dict.items():
+                # Remove the 'module.' prefix if it exists
+                new_key = key.replace('module.', '') if key.startswith('module.') else key
+                new_state_dict[new_key] = value
+            return new_state_dict
+
+        # Load the original state dict
+        original_state_dict = torch.load(path)
+
+        # Remove 'module.' prefix
+        cleaned_state_dict = remove_module_prefix(original_state_dict)
+
+        # Now load the cleaned state dict
+        net.load_state_dict(cleaned_state_dict)
+        # net.load_state_dict(torch.load(path))
         net.eval()
         print(
             "    Model loaded in {:.2f} seconds.".format(
